@@ -1,17 +1,20 @@
-//分页
-class TextPaginationData {
-  String fullContent; // 全部内容数据
-  int pageSize; // 每页内容的固定长度
-  int totalPages; // 总页数
-  int currentPageIndex; // 当前页索引
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:reader_application/model/book.dart';
 
-  TextPaginationData({
-    required this.fullContent,
-    required this.pageSize,
-    required this.totalPages,
+//分页
+class Pagination {
+  int currentPageIndex; // 当前页索引
+  List<String> fullContent; //全部的文本数据
+  Book bookModel;
+
+  Pagination({
     required this.currentPageIndex,
+    required this.fullContent,
+    required this.bookModel,
   });
 
+  int contentVolume = 120; // 每页内容的字符数量
+  late int totalPages = fullContent.length - 1; // 总页数
   bool get hasPreviousPage => currentPageIndex > 0; // 是否有上一页
-  bool get hasNextPage => currentPageIndex < totalPages - 1; // 是否有下一页
+  bool get hasNextPage => currentPageIndex < totalPages; // 是否有下一页
 }

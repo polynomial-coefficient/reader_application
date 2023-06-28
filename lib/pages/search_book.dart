@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:reader_application/model/book.dart';
 
 class SearchBook extends SearchDelegate<String> {
-  final List<Book> bookData; // 假设书籍数据存储在这个数组中
+  final List<Book> booksReserve; // 假设书籍数据存储在这个数组中,Reserve:储备
 
-  SearchBook(this.bookData);
+  SearchBook(this.booksReserve);
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -30,7 +30,7 @@ class SearchBook extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    final List<Book> searchResults = bookData
+    final List<Book> searchResults = booksReserve
         .where(
             (book) => book.fileName.toLowerCase().contains(query.toLowerCase()))
         .toList();
@@ -50,7 +50,7 @@ class SearchBook extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final List<Book> suggestionList = bookData
+    final List<Book> suggestionList = booksReserve
         .where((book) =>
             book.fileName.toLowerCase().startsWith(query.toLowerCase()))
         .toList();

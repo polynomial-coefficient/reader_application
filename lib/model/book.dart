@@ -1,11 +1,16 @@
+// ignore_for_file: avoid_print
 class Book {
   String filePath;
-  int id;
-  String fileName;
 
   Book({
     required this.filePath,
-    required this.id,
-    required this.fileName,
   });
+
+  late int id;
+  late String fileName;
+
+  @override
+  String toString() {
+    return 'id: $id, fileName: $fileName, filePath: $filePath';
+  }
 }
