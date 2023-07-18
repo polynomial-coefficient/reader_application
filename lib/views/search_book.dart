@@ -12,7 +12,7 @@ class SearchBook extends SearchDelegate<String> {
       IconButton(
         icon: const Icon(Icons.clear),
         onPressed: () {
-          query = ''; // 清除搜索关键字
+          query = ""; // 清除搜索关键字
         },
       ),
     ];
@@ -23,7 +23,7 @@ class SearchBook extends SearchDelegate<String> {
     return IconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
-        close(context, ''); // 返回空字符串，表示没有选择任何结果
+        close(context, ""); // 返回空字符串，表示没有选择任何结果
       },
     );
   }

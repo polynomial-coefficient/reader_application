@@ -1,10 +1,9 @@
-// ignore_for_file: avoid_print
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import 'package:reader_application/model/book.dart';
-import 'package:reader_application/service/book_list.dart';
-import 'package:reader_application/service/paging_manufacture.dart';
+import 'package:reader_application/api/paging_manufacture.dart';
+import 'package:reader_application/database/books/book_access.dart';
 
 import 'popup_menu.dart';
 import 'search_book.dart';
@@ -17,14 +16,23 @@ class BookShelf extends StatefulWidget {
 }
 
 class _BookShelfState extends State<BookShelf> {
-  final logger = Logger();
+  final Logger logger = Logger();
+
   List<Book> library = []; // 假设书籍数据存储在这个数组中
 
   @override
   void initState() {
     super.initState();
-    library = BookList().booksList;
-    setState(() {}); // 调用 setState 触发 UI 更新
+    loadBooksList();
+  }
+
+  Future<void> loadBooksList() async {
+    List<Book> resultList = await BookAccess().getBooksList();
+    if (resultList.isNotEmpty) {
+      setState(() {
+        library = resultList;
+      });
+    }
   }
 
   @override
@@ -46,7 +54,7 @@ class _BookShelfState extends State<BookShelf> {
     logger.i(newLibrary.length);
     logger.i(newLibrary.isEmpty);
     setState(() {
-      library = newLibrary;
+      library.addAll(newLibrary);
     });
   }
 
@@ -65,21 +73,57 @@ class _BookShelfState extends State<BookShelf> {
   Widget buildBookItem(BuildContext context, int index) {
     return GestureDetector(
       onTap: () {
-        // 处理点击书籍图标的操作
-        PagingManufacture().openBook(library[index], context);
+        PagingManufacture().openBook(library[index], context); // 处理点击书籍图标的操作
       },
-      child: Column(
-        children: [
-          Image.asset(
-            'assets/images/book_cover.png',
-            width: 60.0,
-            height: 80.0,
-            fit: BoxFit.cover,
-          ),
-          Text(library[index].fileName),
-        ],
-      ),
+      child: buildBookAppearColumn(index),
     );
+  }
+
+  Column buildBookAppearColumn(int index) {
+    int nameSizeLimit = 7;
+    return Column(
+      children: [
+        Image.asset(
+          'assets/images/book_cover.png',
+          width: 60.0,
+          height: 80.0,
+          fit: BoxFit.cover,
+        ),
+        Expanded(
+          // Wrap with Expanded
+          child: Wrap(
+            children: [
+              Text(
+                  formatText(
+                    library[index].fileName.split('.').first,
+                    nameSizeLimit,
+                  ),
+                  style: const TextStyle(
+                    fontSize: 12.0,
+                  )),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  String formatText(String text, int maxLength) {
+    if (text.length <= maxLength) {
+      return text;
+    } else {
+      List<String> lines = [];
+      while (text.isNotEmpty) {
+        if (text.length <= maxLength) {
+          lines.add(text);
+          text = '';
+        } else {
+          lines.add(text.substring(0, maxLength));
+          text = text.substring(maxLength);
+        }
+      }
+      return lines.join('\n');
+    }
   }
 
   SliverGridDelegateWithFixedCrossAxisCount buildSliverGrid() {

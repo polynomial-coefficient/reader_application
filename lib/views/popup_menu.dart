@@ -1,19 +1,17 @@
-// ignore_for_file: avoid_print
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 import 'package:reader_application/model/book.dart';
-import 'package:reader_application/service/book_list.dart';
-import 'package:reader_application/service/select_opus.dart';
+import 'package:reader_application/api/select_opus.dart';
+import 'package:reader_application/database/books/book_access.dart';
 
 class PopupMenu extends StatelessWidget {
   final Function(List<Book>) updateLibrary; // 回调函数参数
 
-  PopupMenu({
+  const PopupMenu({
     Key? key,
     required this.updateLibrary,
   }) : super(key: key);
-
-  List<Book> stockList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +39,20 @@ class PopupMenu extends StatelessWidget {
 
   void executed(BuildContext context, String value) {
     if (value == 'ManualImport') {
-      SelectOpus().getBookFilesList().then((valObjList) {
-        stockList = BookList().booksList + valObjList;
-        updateLibrary(stockList); // 调用回调函数更新 BookShelf 的数据
+      SelectOpus().getBookFilesList().then((bookList) {
+        updateLibrary(bookList); // 调用回调函数更新 BookShelf 的数据
+
+        try {
+          insertsBookList(bookList);
+        } catch (e) {
+          Logger().e(e);
+        }
       });
     }
+  }
+
+  Future<void> insertsBookList(List<Book> bookList) async {
+    int rows = await BookAccess().insertBatchBooks(bookList);
+    Logger().i(rows);
   }
 }

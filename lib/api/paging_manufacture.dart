@@ -3,19 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import 'package:reader_application/model/book.dart';
-import 'package:reader_application/utils/get_content.dart';
+import 'package:reader_application/utils/treat_content.dart';
 import 'package:reader_application/model/pagination.dart';
-import 'package:reader_application/pages/reading_book_page.dart';
+import 'package:reader_application/components/content_region.dart';
+import 'package:reader_application/common/global.dart';
+import 'package:reader_application/api/handle_ontap.dart';
 
 class PagingManufacture {
   final logger = Logger();
-  String docContent = "";
+  String docTxt = "";
 
   void openBook(Book exteriorValue, BuildContext context) {
     logger.i(exteriorValue.filePath.toString());
     //根据file path获取文本中的全部内容
-    GetContent().readTextFileLineByLine(exteriorValue.filePath).then((content) {
-      docContent = content;
+    TreatContent()
+        .readTextFileLineByLine(exteriorValue.filePath)
+        .then((result) {
+      docTxt = result;
       Pagination pagin = fabricateObj(exteriorValue);
       transitionReadingPage(pagin, context);
     });
@@ -26,19 +30,22 @@ class PagingManufacture {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ReadingBookPage(pagination: pagin),
+        builder: (context) => ContentRegion(
+          pagination: pagin,
+          onTap: () {
+            HandleOnTap().handleContentRegionOnTap();
+          },
+        ),
       ),
     );
   }
 
   //将派送到的book模型对象构造成pagination模型对象,fabricate 制造
   Pagination fabricateObj(Book exteriorValue) {
-    int volume = 120; // 每页内容的字符数量
-    List<String> splitStrings = splitTextIntoEqualChunks(docContent, volume);
+    List<String> strList = splitTextIntoEqualChunks(docTxt, Global().vol);
+
     Pagination pagin = Pagination(
-        currentPageIndex: 1,
-        fullContent: splitStrings,
-        bookModel: exteriorValue);
+        currentPageIndex: 1, fullContent: strList, bookModel: exteriorValue);
     return pagin;
   }
 
@@ -55,7 +62,6 @@ class PagingManufacture {
       String chunk = text.substring(i, endIndex);
       result.add(chunk);
     }
-
     return result;
   }
 }

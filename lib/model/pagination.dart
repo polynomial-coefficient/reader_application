@@ -13,8 +13,6 @@ class Pagination {
     required this.bookModel,
   });
 
-  int contentVolume = 120; // 每页内容的字符数量
-  late int totalPages = fullContent.length - 1; // 总页数
   bool get hasPreviousPage => currentPageIndex > 0; // 是否有上一页
-  bool get hasNextPage => currentPageIndex < totalPages; // 是否有下一页
+  bool get hasNextPage => currentPageIndex < (fullContent.length - 1); // 是否有下一页
 }

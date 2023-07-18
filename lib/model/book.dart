@@ -13,4 +13,8 @@ class Book {
   String toString() {
     return 'id: $id, fileName: $fileName, filePath: $filePath';
   }
+
+  Map<String, Object?> toMap() {
+    return {'id': id, 'fileName': fileName, 'filePath': filePath};
+  }
 }

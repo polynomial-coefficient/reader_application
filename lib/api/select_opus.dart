@@ -1,7 +1,7 @@
 // ignore_for_file: avoid_print
 import 'package:file_picker/file_picker.dart';
 
-import 'package:reader_application/service/book_list.dart';
+import 'package:reader_application/api/booklist_provider.dart';
 import 'package:reader_application/model/book.dart';
 
 class SelectOpus {
@@ -17,10 +17,10 @@ class SelectOpus {
         final List<String> filePaths =
             result.files.map((file) => file.path!).toList();
 
-        final BookList bookList = BookList();
-        final List<Book> valObjList = bookList.convertToValObjList(filePaths);
+        final BooklistProvider provider = BooklistProvider();
+        final List<Book> bookList = provider.convert2ValObjList(filePaths);
 
-        return valObjList; // 返回valObjList
+        return bookList; // 返回 bookList
       } else {
         // 用户未选择文件
         print('No files selected.');
@@ -30,6 +30,6 @@ class SelectOpus {
       print('Error: $e');
     }
 
-    return []; // 返回空的valObjList
+    return []; // 返回空List
   }
 }

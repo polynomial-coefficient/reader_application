@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:reader_application/pages/book_shelf.dart';
+import 'package:reader_application/views/book_shelf.dart';
 
 void main() {
   runApp(const MyApp());
